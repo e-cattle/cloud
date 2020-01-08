@@ -1,0 +1,38 @@
+version: '2'
+
+services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - "${PORT}:3000"
+    links:
+      - database
+    volumes:
+      - ./log:/usr/src/app/log
+    depends_on:
+      - database
+      
+  database:
+    image: mongo
+    restart: always
+    ports:
+      - "${MONGO}:27017"
+  
+  backup:
+    image: mongo
+    volumes:
+      - ./db/backup:/backup
+    command: |
+      sh -c "mongodump --host database --out /backup/$$(date +'%y-%m-%d_%H-%M-%S')"
+    links:
+      - database
+  
+  restore:
+    image: mongo
+    volumes:
+      - ./db/restore:/restore
+    command: |
+      mongorestore --host database --drop /restore/
+    links:
+      - database

@@ -1,0 +1,45 @@
+{
+  "name": "e-cattle",
+  "version": "1.20.2",
+  "description": "e-Cattle: a IoT platform to precision livestock.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "contributors": [
+    "Bruno de Abreu Cáceres <brunoacaceres@gmail.com>",
+    "Camilo Carromeu <camilo.carromeu@embrapa.br>",
+    "Hana Karina Salles Rubinsztejn <hana@facom.ufms.br>",
+    "Leandro Borges <leandroborges@outlook.com>",
+    "Luciano Gonda <gonda@facom.ufms.br>",
+    "Nalvo Franco de Almeida Júnior <nalvo@facom.ufms.br>",
+    "Virmerson Bento dos Santos <virmerson@hightechcursos.com.br>"
+  ],
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "consign": "^0.1.6",
+    "cors": "^2.8.4",
+    "dotenv": "^8.2.0",
+    "express": "^4.16.2",
+    "jwt-simple": "^0.5.1",
+    "mongoose": "^5.2.8",
+    "oauth": "^0.9.15",
+    "oauth-signature": "^1.5.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "request": "^2.88.0",
+    "unix-timestamp": "^0.2.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  }
+}
