@@ -1,7 +1,19 @@
-module.exports = function (app) {
-  var auth = require('../../auth/manager.js')(app)
 
-  app.get('/manager/users', auth.authenticate(), function (req, res) {
+module.exports = function (app) {
+  var auth = require('../../auth/user.js')(app)
+  var admin = require('../../auth/admin.js')
+
+  app.get('/manager/user', auth.authenticate(), admin(), function (req, res) {
+    res.status(200).json({
+      name: req.user.name,
+      email: req.user.email,
+      picture: req.user.picture,
+      created: req.user.created,
+      changed: req.user.changed
+    })
+  })
+
+  app.get('/manager/users', auth.authenticate(), admin(), function (req, res) {
     var User = app.db.model('User')
 
     // verifica se o usuário que quer fazer a requisição é admininistrador
@@ -16,8 +28,7 @@ module.exports = function (app) {
     })
   })
 
-  // put para tornar ou não o usuário admin
-  app.put('/manager/switch', auth.authenticate(), function (req, res) {
+  app.put('/manager/switch', auth.authenticate(), admin(), function (req, res) {
     console.log('params = ' + req.body.email)
     var User = app.db.model('User')
 

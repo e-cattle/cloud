@@ -7,7 +7,7 @@ var Strategy = jwt.Strategy
 
 module.exports = function (app) {
   var params = {
-    secretOrKey: process.env.SECRET_ADM,
+    secretOrKey: process.env.SECRET,
     jwtFromRequest: jwt.ExtractJwt.fromAuthHeaderAsBearerToken()
   }
 
@@ -16,8 +16,6 @@ module.exports = function (app) {
 
     User.findOne({ email: payload.email }, function (error, user) {
       if (error || !user) { return done(new Error('User not found!'), null) }
-
-      if (!user.admin) { return done(new Error('User is not a manager!'), null) }
 
       return done(null, user)
     })

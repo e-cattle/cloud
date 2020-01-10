@@ -83,7 +83,9 @@ echo "Configuring MongoDB..."
 
 cp -f /vagrant/box/settings/mongodb.conf /etc/
 
-service mongodb restart
+service mongodb stop
+
+service mongod start
 
 echo "Done!"
 

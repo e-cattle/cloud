@@ -1,7 +1,7 @@
 var timestamp = require('unix-timestamp')
 
 module.exports = function (app) {
-  var auth = require('../../auth/manager.js')(app)
+  var auth = require('../../auth/user.js')(app)
 
   app.get('/manager/simulations', auth.authenticate(), function (req, res) {
     var Simulation = app.db.model('Simulation')
