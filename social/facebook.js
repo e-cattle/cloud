@@ -43,10 +43,10 @@ module.exports = function (app) {
               user.save(function (error) {
                 if (error) { return res.status(500).json(error) }
 
-                return res.json({ token: jwt.encode({ email: data.email, date: Date.now }, process.env.SECRET) })
+                return res.json({ token: jwt.encode({ type: 'USER', email: data.email, date: Date.now }, process.env.SECRET) })
               })
             } else {
-              return res.json({ token: jwt.encode({ email: data.email, date: Date.now }, process.env.SECRET) })
+              return res.json({ token: jwt.encode({ type: 'USER', email: data.email, date: Date.now }, process.env.SECRET) })
             }
           })
         }).catch(function (err) {

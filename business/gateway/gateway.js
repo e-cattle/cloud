@@ -2,20 +2,26 @@
 module.exports = function (app) {
   var jwt = require('jwt-simple')
 
-  var auth = require('../../auth/user.js')(app)
+  var auth = require('../../auth.js')(app)
 
-  app.get('/gateway/token/:farm', function (req, res) {
+  app.post('/gateway/token/:farm', function (req, res) {
     /*
      * Procurar pela fazenda (utilizando o CODE passado - :farm) e registrar um novo 'candidato a gateway'.
-     * Criar uma nova collection no Mongoose denominada 'candidate'. Inserir o MAC (que veio do BigBoxx) e data de registro.
+     * Criar uma nova collection no Mongoose denominada 'candidate'. Inserir o MAC (que veio do BigBoxx) e data de registro, relacionando
+     * com uma fazenda existente (por chave estrangeira).
      * Haverá um CRUD específico para 'candidatos', onde o usuário da propriedade poderá aprovar, salvando o novo BigBoxx em uma collection
      * denominada 'gateway' (e apagando da candidate). Neste momento é obrigatória uma descrição e são armazanados o usuário que aprovou e
      * todos os dados possíveis (MAC, dada do pedido, data da aprovação, etc). Um MAC já cadastrado na propriedade é simplesmente 'ativado'
      * no momento de sua aprovação. Por fim, é retornado o JWT conforme mockup abaixo.
      */
 
+    if (!req.body.mac) {
+      return res.status(500).json('Invalid MAC address!')
+    }
+
     return res.json({
       token: jwt.encode({
+        type: 'GATEWAY',
         farm: req.params.farm,
         mac: req.body.mac,
         date: Date.now
@@ -23,7 +29,8 @@ module.exports = function (app) {
     })
   })
 
-  app.get('/gateway/active', auth.authenticate(), function (req, res) {
+  // app.get('/gateway/active', auth.authenticate(), function (req, res) {
+  app.get('/gateway/active', function (req, res) {
     /*
      * Obtem o MAC e o CODE da fazenda do payload do JWT e retorna se o gateway está ativo, ou seja,
      * se já foi 'aprovado' (saiu das collection 'candidate' para a 'gateway') e está com o bit de 'active'

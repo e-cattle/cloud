@@ -55,10 +55,10 @@ module.exports = function (app) {
                       return res.status(500).json(error)
                     }
 
-                    return res.status(200).json({ token: jwt.encode({ email: data.email, date: Date.now }, process.env.SECRET) })
+                    return res.status(200).json({ token: jwt.encode({ type: 'USER', email: data.email, date: Date.now }, process.env.SECRET) })
                   })
                 } else {
-                  return res.status(200).json({ token: jwt.encode({ email: data.email, date: Date.now }, process.env.SECRET) })
+                  return res.status(200).json({ token: jwt.encode({ type: 'USER', email: data.email, date: Date.now }, process.env.SECRET) })
                 }
               })
             } catch (e) {

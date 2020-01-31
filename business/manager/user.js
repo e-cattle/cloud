@@ -1,7 +1,7 @@
 
 module.exports = function (app) {
-  var auth = require('../../auth/user.js')(app)
-  var admin = require('../../auth/admin.js')
+  var auth = require('../../auth.js')(app)
+  var admin = require('../../admin.js')
 
   app.get('/manager/user', auth.authenticate(), admin(), function (req, res) {
     res.status(200).json({
