@@ -4,15 +4,23 @@ module.exports = function (app) {
 
   var auth = require('../../auth.js')(app)
 
-  app.post('/gateway/token/:farm', function (req, res) {
+  app.post('/gateway/register', (req, res) => {
     /*
      * Procurar pela fazenda (utilizando o CODE passado - :farm) e registrar um novo 'candidato a gateway'.
-     * Criar uma nova collection no Mongoose denominada 'candidate'. Inserir o MAC (que veio do BigBoxx) e data de registro, relacionando
-     * com uma fazenda existente (por chave estrangeira).
-     * Haverá um CRUD específico para 'candidatos', onde o usuário da propriedade poderá aprovar, salvando o novo BigBoxx em uma collection
-     * denominada 'gateway' (e apagando da candidate). Neste momento é obrigatória uma descrição e são armazanados o usuário que aprovou e
-     * todos os dados possíveis (MAC, dada do pedido, data da aprovação, etc). Um MAC já cadastrado na propriedade é simplesmente 'ativado'
-     * no momento de sua aprovação. Por fim, é retornado o JWT conforme mockup abaixo.
+     * Criar uma nova collection no Mongoose denominada 'gateway', com os seguintes atributos:
+     * farm: chave estrangeira para esta collection
+     * mac: MAC Address
+     * description: inicalmente null (poderá ser alterado apenas pela interface web)
+     * author: chave estrangeira para 'user' e pode ser null inicialmente. sempre atualizado para o último author que fez qualquer ação.
+     * register: true quando o gateway é registrado e false quando é feito o unregister remoto (não pode ser alterado pela interface web)
+     * registered: data do registro
+     * approve: false no registro e true quando é aceito pela interface web
+     * approved: null inicialmente e data da aprovação depois
+     * approver: null inicialmente e usuário que aprovou depois (chave estrangeira para 'user')
+     * active: false no registro e true automático quando é aprovado (pode ser mudado a qualquer momento pela interface web)
+     * Pela interface web é possível apagar permanentemente um gateway (é preciso 'logar' isso).
+     * Caso o dispositivo esteja com register=false, ele é simplesmente alterado para true nesta chamada.
+     * Por fim, é retornado o JWT conforme mockup abaixo.
      */
 
     if (!req.body.mac) {
@@ -22,34 +30,41 @@ module.exports = function (app) {
     return res.json({
       token: jwt.encode({
         type: 'GATEWAY',
-        farm: req.params.farm,
+        farm: req.body.farm,
         mac: req.body.mac,
         date: Date.now
       }, process.env.SECRET)
     })
   })
 
+  app.post('/gateway/unregister', auth.authenticate(), (req, res) => {
+    return res.json({})
+  })
+
   // app.get('/gateway/active', auth.authenticate(), function (req, res) {
-  app.get('/gateway/active', function (req, res) {
+  app.get('/gateway/status', auth.authenticate(), function (req, res) {
     /*
      * Obtem o MAC e o CODE da fazenda do payload do JWT e retorna se o gateway está ativo, ou seja,
      * se já foi 'aprovado' (saiu das collection 'candidate' para a 'gateway') e está com o bit de 'active'
      * setado para 1.
      */
 
-    return res.json({ active: true })
+    return res.json({
+      register: true,
+      approve: true,
+      active: false
+    })
   })
 
-  app.get('/gateway/farm', auth.authenticate(), function (req, res) {
+  app.get('/gateway/farm/synopsis', auth.authenticate(), (req, res) => {
     /*
      * Obtem dados básicos da fazenda a partir do CODE presente no payload do JWT.
      */
 
     return res.json({
       name: 'Santa Clara',
-      city: 'Campo Grande - MS',
-      farmer: 'Camilo Carromeu',
-      since: '12/8/18'
+      location: 'Campo Grande - MS',
+      country: 'Brasil'
     })
   })
 }

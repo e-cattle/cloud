@@ -25,6 +25,7 @@ module.exports = function (app) {
       break
 
     case 'GATEWAY':
+      /*
       var Gateway = app.db.model('Gateway')
 
       Gateway.findOne({ gateway: payload.email, farm: payload.email }, function (error, gateway) {
@@ -32,8 +33,10 @@ module.exports = function (app) {
 
         return done(null, gateway)
       })
+      */
+      return done(null, {})
 
-      break
+      // break
     }
   })
 
