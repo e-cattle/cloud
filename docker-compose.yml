@@ -1,24 +1,27 @@
-version: '2'
+version: '2.4'
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: ./docker/${NODE_ENV}/Dockerfile
     restart: always
     ports:
       - "${PORT}:3000"
     links:
       - database
-    volumes:
-      - ./log:/usr/src/app/log
     depends_on:
       - database
-      
+    extends:
+      file: ./docker/environments.yml
+      service: ${NODE_ENV}
+
   database:
     image: mongo
     restart: always
     ports:
       - "${MONGO}:27017"
-  
+
   backup:
     image: mongo
     volumes:
@@ -27,7 +30,7 @@ services:
       sh -c "mongodump --host database --out /backup/$$(date +'%y-%m-%d_%H-%M-%S')"
     links:
       - database
-  
+
   restore:
     image: mongo
     volumes:

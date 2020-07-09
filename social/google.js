@@ -11,8 +11,8 @@ module.exports = function (app) {
         url: 'https://accounts.google.com/o/oauth2/token',
         form: {
           code: req.body.code,
-          client_id: process.env.GOOGLE_ID,
-          client_secret: process.env.GOOGLE_PK,
+          client_id: app.settings.auth.google.id,
+          client_secret: app.settings.auth.google.secret,
           redirect_uri: req.body.redirectUri,
           grant_type: 'authorization_code'
         },
@@ -55,10 +55,10 @@ module.exports = function (app) {
                       return res.status(500).json(error)
                     }
 
-                    return res.status(200).json({ token: jwt.encode({ type: 'USER', email: data.email, date: Date.now }, process.env.SECRET) })
+                    return res.status(200).json({ token: jwt.encode({ type: 'USER', email: data.email, date: Date.now }, app.settings.security.secret) })
                   })
                 } else {
-                  return res.status(200).json({ token: jwt.encode({ type: 'USER', email: data.email, date: Date.now }, process.env.SECRET) })
+                  return res.status(200).json({ token: jwt.encode({ type: 'USER', email: data.email, date: Date.now }, app.settings.security.secret) })
                 }
               })
             } catch (e) {

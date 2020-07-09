@@ -33,7 +33,7 @@ module.exports = function (app) {
         farm: req.body.farm,
         mac: req.body.mac,
         date: Date.now
-      }, process.env.SECRET)
+      }, app.settings.security.secret)
     })
   })
 
@@ -45,14 +45,14 @@ module.exports = function (app) {
   app.get('/gateway/status', auth.authenticate(), function (req, res) {
     /*
      * Obtem o MAC e o CODE da fazenda do payload do JWT e retorna se o gateway está ativo, ou seja,
-     * se já foi 'aprovado' (saiu das collection 'candidate' para a 'gateway') e está com o bit de 'active'
+     * se já foi 'aprovado' e está com o bit de 'active'
      * setado para 1.
      */
 
     return res.json({
       register: true,
       approve: true,
-      active: false
+      active: true
     })
   })
 

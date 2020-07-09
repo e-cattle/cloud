@@ -1,0 +1,21 @@
+{
+  "api": {
+    "port": 3000
+  },
+  "database": {
+    "uri": "database:27017/e-cattle"
+  },
+  "security": {
+    "secret": ""
+  },
+  "auth": {
+    "google": {
+      "id": "",
+      "secret": ""
+    },
+    "facebook": {
+      "id": "",
+      "secret": ""
+    }
+  }
+}

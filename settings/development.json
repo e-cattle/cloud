@@ -1,0 +1,21 @@
+{
+  "api": {
+    "port": 3000
+  },
+  "database": {
+    "uri": "database:27017/e-cattle"
+  },
+  "security": {
+    "secret": "iHeFra0M6mvV5rAuz8CRLHaalJzLwUldo4lqrMWBKoxYZLtiRToaHw3t50vauwmp"
+  },
+  "auth": {
+    "google": {
+      "id": "146804891732-uohbf5o4cesrjvj66al83um6kffsk10r.apps.googleusercontent.com",
+      "secret": "-OpARt41rrwZMiqIYHQTZ7dR"
+    },
+    "facebook": {
+      "id": "1376532969216480",
+      "secret": "8bbd5d3cefac726fc38541212383001b"
+    }
+  }
+}

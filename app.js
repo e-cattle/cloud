@@ -7,15 +7,13 @@ var parser = require('body-parser')
 
 var cors = require('cors')
 
-require('dotenv').config()
-
-console.log(JSON.stringify(process.env.DB))
-
 app.use(cors())
 
 var environment = process.argv[2] != null ? process.argv[2] : 'production'
 
 console.log('Loading settings to environment \'' + environment + '\'')
+
+app.settings = require('./settings/' + environment + '.json')
 
 app.use(parser.urlencoded({ extended: true }))
 
@@ -23,13 +21,13 @@ app.use(parser.json())
 
 var mongoose = require('mongoose')
 
-console.log('MongoDB URI: ' + process.env.DB)
+console.log('MongoDB URI: ' + app.settings.database.uri)
 
 const connect = () => {
-  mongoose.connect('mongodb://' + process.env.DB).then(() => {
+  mongoose.connect('mongodb://' + app.settings.database.uri).then(() => {
     console.log('Mongo is connected!')
   }).catch(error => {
-    console.error('Critical error to connect on DB: "mongodb://' + process.env.DB + '"')
+    console.error('Critical error to connect on DB: "mongodb://' + app.settings.database.uri + '"')
     console.error(error)
 
     setTimeout(connect, 5000)
@@ -51,7 +49,7 @@ consign
   .then('model')
   .into(app)
 
-var port = process.env.PORT
+var port = app.settings.api.port
 var ip = process.env.IP || '0.0.0.0'
 
 console.log('Listening: ' + ip + ':' + port)
