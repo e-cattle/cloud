@@ -7,7 +7,7 @@ services:
       dockerfile: ./docker/${NODE_ENV}/Dockerfile
     restart: always
     ports:
-      - "${PORT}:3000"
+      - "${DOCKER_NODE_PORT}:3000"
     links:
       - database
     depends_on:
@@ -20,7 +20,7 @@ services:
     image: mongo
     restart: always
     ports:
-      - "${MONGO}:27017"
+      - "${DOCKER_MONGO_PORT}:27017"
 
   backup:
     image: mongo

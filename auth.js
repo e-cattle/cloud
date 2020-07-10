@@ -7,7 +7,7 @@ var Strategy = jwt.Strategy
 
 module.exports = function (app) {
   var params = {
-    secretOrKey: app.settings.security.secret,
+    secretOrKey: process.env.JWT_SECRET,
     jwtFromRequest: jwt.ExtractJwt.fromAuthHeaderAsBearerToken()
   }
 

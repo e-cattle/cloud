@@ -5,15 +5,15 @@ var app = require('express')()
 
 var parser = require('body-parser')
 
+require('dotenv').config()
+
 var cors = require('cors')
 
 app.use(cors())
 
 var environment = process.argv[2] != null ? process.argv[2] : 'production'
 
-console.log('Loading settings to environment \'' + environment + '\'')
-
-app.settings = require('./settings/' + environment + '.json')
+console.log('Environment: \'' + environment + '\'')
 
 app.use(parser.urlencoded({ extended: true }))
 
@@ -21,13 +21,15 @@ app.use(parser.json())
 
 var mongoose = require('mongoose')
 
-console.log('MongoDB URI: ' + app.settings.database.uri)
+const db = 'database:27017'
+
+console.log('MongoDB URI: ' + db)
 
 const connect = () => {
-  mongoose.connect('mongodb://' + app.settings.database.uri).then(() => {
+  mongoose.connect('mongodb://' + db).then(() => {
     console.log('Mongo is connected!')
   }).catch(error => {
-    console.error('Critical error to connect on DB: "mongodb://' + app.settings.database.uri + '"')
+    console.error('Critical error to connect on DB: "mongodb://' + db + '"')
     console.error(error)
 
     setTimeout(connect, 5000)
@@ -49,8 +51,8 @@ consign
   .then('model')
   .into(app)
 
-var port = app.settings.api.port
-var ip = process.env.IP || '0.0.0.0'
+const port = '3000'
+const ip = '0.0.0.0'
 
 console.log('Listening: ' + ip + ':' + port)
 

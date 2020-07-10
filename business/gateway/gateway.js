@@ -33,7 +33,7 @@ module.exports = function (app) {
         farm: req.body.farm,
         mac: req.body.mac,
         date: Date.now
-      }, app.settings.security.secret)
+      }, process.env.JWT_SECRET)
     })
   })
 
