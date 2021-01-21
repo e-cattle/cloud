@@ -4,29 +4,6 @@ module.exports = function (app) {
   var admin = require('../../admin.js')
 
   app.get('/manager/user', auth.authenticate(), admin(), async function (req, res) {
-    var NewUser = app.db.model('NewUser')
-    var Farm = app.db.model('Farm')
-    /* Verifica se o usuário logado possui vínculo pendente como usuário de alguma farm.
-    Em seguida já o adiciona no array de Users da Farm com seu papel */
-    await NewUser.find({ email: req.user.email }, function (error, newUsers) {
-      if (error) {
-        res.send(error)
-      } else {
-        newUsers.forEach(newUser => {
-          Farm.findOneAndUpdate({ _id: newUser.farm }, { $push: { users: { user: req.user, role: newUser.role } } }, async function (error) {
-            if (error) {
-              res.status(500).send(error)
-            } else {
-              await NewUser.findOneAndDelete({ _id: newUser._id }, function (error) {
-                if (!error) res.status(200).json('Usuário deletado da lista de usuários')
-              })
-              res.status(200).json('Usuário vinculado com sucesso à propriedade ' + newUser.farm)
-            }
-          })
-        })
-      }
-    })
-
     res.status(200).json({
       name: req.user.name,
       email: req.user.email,

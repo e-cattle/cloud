@@ -1,22 +1,22 @@
 module.exports = function (app) {
   var auth = require('../../auth.js')(app)
 
-  app.get('/manager/gateways/:codeFarm', auth.authenticate(), function (req, res) {
+  app.get('/web/gateways/:codeFarm', auth.authenticate(), async function (req, res) {
     var codeFarm = req.params.codeFarm
     var Gateway = app.db.model('Gateway')
 
-    Gateway.find().populate({
+    await Gateway.find().populate({
       path: 'farm',
       match: {
         code: codeFarm
       }
-    }).exec(function (err, gateways) {
+    }).populate('author').exec(function (err, gateways) {
       if (err) { res.status(500).send(err) }
       return res.status(200).json(gateways)
     })
   })
 
-  app.get('/manager/gateway/:mac', auth.authenticate(), function (req, res) {
+  app.get('/web/gateway/:mac', auth.authenticate(), function (req, res) {
     var mac = req.params.mac
     var Gateway = app.db.model('Gateway')
     Gateway.findOne({ mac }, function (err, gateway) {
@@ -25,7 +25,7 @@ module.exports = function (app) {
     })
   })
 
-  app.put('/manager/gateway/:mac', auth.authenticate(), async function (req, res) {
+  app.put('/web/gateway/:mac', auth.authenticate(), async function (req, res) {
     var mac = req.params.mac
     var Gateway = app.db.model('Gateway')
 
@@ -34,8 +34,7 @@ module.exports = function (app) {
     })
   })
 
-  /* Cadastro de gateway e vínculo com a fazenda através do code */
-  app.post('/manager/gateway', auth.authenticate(), async function (req, res) {
+  app.post('/web/gateway', auth.authenticate(), async function (req, res) {
     if (!req.body.mac || req.body.mac.length === 0) { return res.status(500).json('This type is not supported!') }
     var Gateway = app.db.model('Gateway')
     var gateway = (new Gateway()).toObject()
