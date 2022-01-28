@@ -1,8 +1,8 @@
+const { autoIncrement } = require('mongoose-plugin-autoinc')
+
 module.exports = function (app) {
   var Schema = app.db.Schema
-
-  return app.db.model('Farm', new Schema({
-    code: { type: Number, required: true, unique: true },
+  var FarmSchema = new Schema({
     name: String,
     city: String,
     state: String,
@@ -12,8 +12,14 @@ module.exports = function (app) {
     changed: { type: Date, default: Date.now },
     synched: { type: Date },
     active: { type: Boolean, default: true },
+    stackSwarmCreated: { type: Boolean, default: false },
     author: { type: Schema.Types.ObjectId, ref: 'User' },
     users: [{ user: { type: Schema.Types.ObjectId, ref: 'User' }, role: String }]
-  }).index({ code: 1 })
-  )
+  }).plugin(autoIncrement, {
+    model: 'farms',
+    field: 'code',
+    startAt: 1
+  })
+
+  return app.db.model('Farm', FarmSchema)
 }

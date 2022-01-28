@@ -12,7 +12,7 @@ module.exports = function (app) {
       changed: req.user.changed
     })
   })
-
+  /* Busca todos usuários */
   app.get('/manager/users', auth.authenticate(), admin(), function (req, res) {
     var User = app.db.model('User')
     User.find({}, function (error, users) {
@@ -25,7 +25,7 @@ module.exports = function (app) {
       }
     })
   })
-
+  /* Busca usuário com EMAIL passado como parâmetro  */
   app.get('/manager/users/:email', auth.authenticate(), admin(), function (req, res) {
     var User = app.db.model('User')
     User.find({ email: { $regex: req.params.email, $options: 'i' } }, function (error, users) {
@@ -38,7 +38,7 @@ module.exports = function (app) {
       }
     })
   })
-
+  /* Altera flag admin do usuário com EMAIL passado como parâmetro */
   app.put('/manager/switch', auth.authenticate(), admin(), function (req, res) {
     console.log('params = ' + req.body.email)
     var User = app.db.model('User')

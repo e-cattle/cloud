@@ -1,10 +1,9 @@
 module.exports = function (app) {
   var auth = require('../../auth.js')(app)
-
+  /* Busca Middlewares que pertencem a propriedade que possui CODE passado como parâmetro */
   app.get('/manager/gateways/:codeFarm', auth.authenticate(), function (req, res) {
     var codeFarm = req.params.codeFarm
     var Gateway = app.db.model('Gateway')
-
     Gateway.find().populate({
       path: 'farm',
       match: {
@@ -15,7 +14,7 @@ module.exports = function (app) {
       return res.status(200).json(gateways)
     })
   })
-
+  /* Busca Middleware específico através de seu MAC */
   app.get('/manager/gateway/:mac', auth.authenticate(), function (req, res) {
     var mac = req.params.mac
     var Gateway = app.db.model('Gateway')
@@ -25,6 +24,7 @@ module.exports = function (app) {
     })
   })
 
+  /* Edição de Middleware pelo MAC passado como parâmetro */
   app.put('/manager/gateway/:mac', auth.authenticate(), async function (req, res) {
     var mac = req.params.mac
     var Gateway = app.db.model('Gateway')
@@ -34,7 +34,7 @@ module.exports = function (app) {
     })
   })
 
-  /* Cadastro de gateway e vínculo com a fazenda através do code */
+  /* Cadastro de gateway e vínculo com a fazenda através do CODE */
   app.post('/manager/gateway', auth.authenticate(), async function (req, res) {
     if (!req.body.mac || req.body.mac.length === 0) { return res.status(500).json('This type is not supported!') }
     var Gateway = app.db.model('Gateway')

@@ -25,7 +25,7 @@ module.exports = function (app) {
               }
               Farm.findOneAndUpdate({ _id: newUser.farm }, { users: farm.users }, function (error) {
                 if (error) res.status(501).send('Erro ao atualizar usuarios da propriedade')
-              }) // falta deletar da collection newusers
+              })
               // res.status(201).json('Usuário vinculado com sucesso à propriedade ' + newUser.farm)
             }
           })

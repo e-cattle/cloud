@@ -1,12 +1,15 @@
-
+/*
+  Os usuários que são adicionados via aplicação "Sistema de Gestão de Inquilinos" vão para uma
+  "fila" de novos usuários representada pela Collection "new-user".
+  Esses novos usuários só serão vinculados de fato na Collection "farm" após o primeiro login na aplicação "Portal Web".
+*/
 module.exports = function (app) {
   var auth = require('../../auth.js')(app)
   var admin = require('../../admin.js')
-
+  /* Busca todos da "fila" de novos usuários */
   app.get('/manager/new-users', auth.authenticate(), admin(), function (req, res) {
     var NewUser = app.db.model('NewUser')
 
-    // verifica se o usuário que quer fazer a requisição é admininistrador
     NewUser.find({}, function (error, newUsers) {
       if (error) {
         console.log('error: ' + error)
@@ -17,7 +20,7 @@ module.exports = function (app) {
       }
     })
   })
-
+  /* Adiciona usuário na "fila" de novos usuários */
   app.post('/manager/new-user', auth.authenticate(), admin(), async function (req, res) {
     if (!req.body.email || req.body.email.length === 0) { return res.status(500).json('This type is not supported!') }
     var NewUser = app.db.model('NewUser')
@@ -31,7 +34,7 @@ module.exports = function (app) {
       if (error) { res.send(error) } else { res.status(201).json('Usuário cadastrado na lista de usuários!') }
     })
   })
-
+  /* Deleta usuário da "fila" de novos usuários através do EMAIL passado como parâmetro */
   app.delete('/manager/new-user/:email', admin(), function (req, res) {
     var NewUser = app.db.model('NewUser')
     NewUser.findByIdAndRemove({ email: req.params.email }, function (error, user) {

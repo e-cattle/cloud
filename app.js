@@ -21,6 +21,8 @@ app.use(parser.json())
 
 var mongoose = require('mongoose')
 
+mongoose.set('useCreateIndex', true)
+
 const db = 'database:27017'
 
 console.log('MongoDB URI: ' + db)

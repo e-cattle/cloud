@@ -32,22 +32,21 @@ module.exports = function (app) {
     var Gateway = app.db.model('Gateway')
 
     Farm.findOne({ code: code }).populate('users.user').exec(function (err, farm) {
-      if (err) {
-        throw new Error('Código de propriedade inválido')
+      if (err || !farm) {
+        return res.status(500).json('Code de propriedade inválido')
       } else {
         Gateway.findOneAndUpdate({ mac: req.body.mac }, { mac: req.body.mac, farm: farm }, { upsert: true, setDefaultsOnInsert: true }, function (error) {
-          if (error) { throw new Error('Erro ao cadastrar Gateway') }
+          if (error) { return res.status(500).json('Erro ao salvar Gateway') }
+          return res.json({
+            token: jwt.encode({
+              type: 'GATEWAY',
+              farm: req.body.farm,
+              mac: req.body.mac,
+              date: Date.now
+            }, process.env.JWT_SECRET)
+          })
         })
       }
-    })
-
-    return res.json({
-      token: jwt.encode({
-        type: 'GATEWAY',
-        farm: req.body.farm,
-        mac: req.body.mac,
-        date: Date.now
-      }, process.env.JWT_SECRET)
     })
   })
 
@@ -63,12 +62,12 @@ module.exports = function (app) {
       farm: null
     }
     await Gateway.findOneAndUpdate({ mac: payloadDecoded.mac }, resetGateway, function (error) {
-      if (error) { res.status(500).send(error) } else { res.status(200).json('Gateway de MAC ' + payloadDecoded.mac + ' desvinculado!') }
+      if (error) { return res.status(500).send(error) } else { return res.status(200).json('Gateway de MAC ' + payloadDecoded.mac + ' desvinculado!') }
     })
-    return res.json({})
+
+    await Gateway.syncIndexes()
   })
 
-  // app.get('/gateway/active', auth.authenticate(), function (req, res) {
   app.get('/gateway/status', auth.authenticate(), async function (req, res) {
     /*
      * Obtem o MAC e o CODE da fazenda do payload do JWT e retorna se o gateway está ativo, ou seja,
@@ -79,8 +78,7 @@ module.exports = function (app) {
 
     var Gateway = app.db.model('Gateway')
     await Gateway.findOne({ mac: payloadDecoded.mac }).populate('farm').populate('author').exec(function (err, gateway) {
-      console.log(gateway)
-      if (err) {
+      if (err || gateway === null) {
         return res.json({
           register: false,
           approve: false,
@@ -103,7 +101,7 @@ module.exports = function (app) {
     const payloadDecoded = jwt.decode(req.headers.authorization.replace('Bearer ', ''), process.env.JWT_SECRET)
     var Farm = app.db.model('Farm')
     await Farm.findOne({ code: payloadDecoded.farm }).populate('users').exec(function (err, farm) {
-      if (err) {
+      if (err || !farm) {
         return res.status(500).json(err)
       } else {
         return res.json({
