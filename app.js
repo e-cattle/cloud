@@ -23,7 +23,7 @@ var mongoose = require('mongoose')
 
 mongoose.set('useCreateIndex', true)
 
-const db = 'database:27017'
+const db = 'database'
 
 console.log('MongoDB URI: ' + db)
 

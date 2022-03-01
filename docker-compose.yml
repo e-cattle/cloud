@@ -4,7 +4,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: ./docker/${NODE_ENV}/Dockerfile
+      dockerfile: Dockerfile
     restart: always
     ports:
       - "${DOCKER_NODE_PORT}:3000"
@@ -12,9 +12,7 @@ services:
       - database
     depends_on:
       - database
-    extends:
-      file: ./docker/environments.yml
-      service: ${NODE_ENV}
+    
 
   database:
     image: mongo
