@@ -26,6 +26,7 @@ module.exports = function (app) {
     var NewUser = app.db.model('NewUser')
     var newUser = (new NewUser()).toObject()
 
+    newUser.name = req.body.name
     newUser.email = req.body.email
     newUser.role = req.body.role
     newUser.farm = req.body.farm

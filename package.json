@@ -27,6 +27,7 @@
     "jwt-simple": "^0.5.1",
     "mongoose": "^5.2.8",
     "mongoose-plugin-autoinc": "^1.1.9",
+    "nodemailer": "^6.7.3",
     "oauth": "^0.9.15",
     "oauth-signature": "^1.5.0",
     "passport": "^0.4.0",

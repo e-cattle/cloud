@@ -2,7 +2,7 @@ module.exports = function (app) {
   var Schema = app.db.Schema
 
   var UserSchema = new Schema({
-    name: String,
+    name: { type: String, default: '' },
     email: {
       type: String,
       required: true,
