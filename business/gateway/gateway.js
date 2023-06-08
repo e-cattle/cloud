@@ -43,7 +43,7 @@ module.exports = function (app) {
               farm: req.body.farm,
               mac: req.body.mac,
               date: Date.now
-            }, process.env.JWT_SECRET)
+            }, `${req.body.mac}${code}`)
           })
         })
       }
