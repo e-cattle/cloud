@@ -1,5 +1,5 @@
 module.exports = function (app) {
-  var auth = require('../../auth.js')(app)
+  var auth = require('../auth/user.js')(app)
 
   app.get('/web/farm/:code', auth.authenticate(), function (req, res) {
     var code = req.params.code

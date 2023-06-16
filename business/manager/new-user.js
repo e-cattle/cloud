@@ -4,7 +4,7 @@
   Esses novos usuários só serão vinculados de fato na Collection "farm" após o primeiro login na aplicação "Portal Web".
 */
 module.exports = function (app) {
-  var auth = require('../../auth.js')(app)
+  var auth = require('../auth/user.js')(app)
   var admin = require('../../admin.js')
   /* Busca todos da "fila" de novos usuários */
   app.get('/manager/new-users', auth.authenticate(), admin(), function (req, res) {

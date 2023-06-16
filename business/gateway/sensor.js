@@ -1,7 +1,8 @@
 
 module.exports = function (app) {
-  var auth = require('../../auth.js')(app)
+  var auth = require('../auth/gateway.js')
 
-  app.post('/gateway/data', auth.authenticate(), function (req, res) {
+  app.post('/gateway/data', function (req, res) {
+    auth.authenticateGateway(req, res);
   })
 }

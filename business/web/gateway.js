@@ -1,5 +1,5 @@
 module.exports = function (app) {
-  var auth = require('../../auth.js')(app)
+  var auth = require('../auth/user.js')(app)
 
   /* Busca todos Middlewares vinculados na propriedade de CODE passado como parâmetro */
   app.get('/web/gateways/:codeFarm', auth.authenticate(), async function (req, res) {

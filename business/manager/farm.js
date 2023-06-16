@@ -1,5 +1,5 @@
 module.exports = function (app) {
-  var auth = require('../../auth.js')(app)
+  var auth = require('../auth/user.js')(app)
   var admin = require('../../admin.js')
 
   /* Busca todas propriedades do sistema */

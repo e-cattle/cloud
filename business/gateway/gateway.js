@@ -2,7 +2,7 @@
 module.exports = function (app) {
   var jwt = require('jwt-simple')
 
-  var auth = require('../../auth.js')(app)
+  var auth = require('../auth/gateway.js')
 
   app.post('/gateway/register', (req, res) => {
     /*
@@ -50,8 +50,10 @@ module.exports = function (app) {
     })
   })
 
-  app.post('/gateway/unregister', auth.authenticate(), async (req, res) => {
-    const payloadDecoded = jwt.decode(req.headers.authorization.replace('Bearer ', ''), process.env.JWT_SECRET)
+  app.post('/gateway/unregister', async (req, res) => {
+    auth.authenticateGateway(req, res);
+    const { code, mac } = req.body;
+    //const payloadDecoded = jwt.decode(req.headers.authorization.replace('Bearer ', ''), `${mac}${code}`)
     var Gateway = app.db.model('Gateway')
     var resetGateway = {
       active: false,
@@ -61,23 +63,25 @@ module.exports = function (app) {
       approver: null,
       farm: null
     }
-    await Gateway.findOneAndUpdate({ mac: payloadDecoded.mac }, resetGateway, function (error) {
-      if (error) { return res.status(500).send(error) } else { return res.status(200).json('Gateway de MAC ' + payloadDecoded.mac + ' desvinculado!') }
+    await Gateway.findOneAndUpdate({ mac: mac }, resetGateway, function (error) {
+      if (error) { return res.status(500).send(error) } else { return res.status(200).json('Gateway de MAC ' + mac + ' desvinculado!') }
     })
 
     await Gateway.syncIndexes()
   })
 
-  app.get('/gateway/status', auth.authenticate(), async function (req, res) {
+  app.get('/gateway/status', async function (req, res) {
     /*
      * Obtem o MAC e o CODE da fazenda do payload do JWT e retorna se o gateway está ativo, ou seja,
      * se já foi 'aprovado' e está com o bit de 'active'
      * setado para 1.
      */
-    const payloadDecoded = jwt.decode(req.headers.authorization.replace('Bearer ', ''), process.env.JWT_SECRET)
+    auth.authenticateGateway(req, res);
+    const { code, mac } = req.query;
+    // const payloadDecoded = jwt.decode(req.headers.authorization.replace('Bearer ', ''), `${mac}${code}`)
 
     var Gateway = app.db.model('Gateway')
-    await Gateway.findOne({ mac: payloadDecoded.mac }).populate('farm').populate('author').exec(function (err, gateway) {
+    await Gateway.findOne({ mac }).populate('farm').populate('author').exec(function (err, gateway) {
       if (err || gateway === null) {
         return res.json({
           register: false,
@@ -94,13 +98,15 @@ module.exports = function (app) {
     })
   })
 
-  app.get('/gateway/farm/synopsis', auth.authenticate(), async (req, res) => {
+  app.get('/gateway/farm/synopsis', async (req, res) => {
     /*
      * Obtem dados básicos da fazenda a partir do CODE presente no payload do JWT.
      */
-    const payloadDecoded = jwt.decode(req.headers.authorization.replace('Bearer ', ''), process.env.JWT_SECRET)
+    auth.authenticateGateway(req, res);
+    const { code } = req.query;
+    //const payloadDecoded = jwt.decode(req.headers.authorization.replace('Bearer ', ''), `${mac}${code}`)
     var Farm = app.db.model('Farm')
-    await Farm.findOne({ code: payloadDecoded.farm }).populate('users').exec(function (err, farm) {
+    await Farm.findOne({ code: code }).populate('users').exec(function (err, farm) {
       if (err || !farm) {
         return res.status(500).json(err)
       } else {

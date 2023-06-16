@@ -1,6 +1,6 @@
 
 module.exports = function (app) {
-  var auth = require('../../auth.js')(app)
+  var auth = require('../auth/user.js')(app)
 
   app.get('/web/user', auth.authenticate(), function (req, res) {
     var NewUser = app.db.model('NewUser')
